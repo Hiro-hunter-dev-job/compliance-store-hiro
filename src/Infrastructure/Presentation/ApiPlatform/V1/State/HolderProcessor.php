@@ -27,6 +27,7 @@ final readonly class HolderProcessor implements ProcessorInterface
         $input = new HolderResource();
         $input->holderName = \is_string($payload['holderName'] ?? null) ? $payload['holderName'] : null;
         $input->birthDate = \is_string($payload['birthDate'] ?? null) ? $payload['birthDate'] : null;
+        $input->email = \is_string($payload['email'] ?? null) ? $payload['email'] : null;
 
         $this->validator->validate($input);
 
@@ -35,6 +36,7 @@ final readonly class HolderProcessor implements ProcessorInterface
             $command = new CreateHolderCommand(
                 holderName: $input->holderName,
                 birthDate: $input->birthDate,
+                email: $input->email,
             );
             $this->useCase->execute($command);
             die;

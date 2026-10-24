@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Presentation\ApiPlatform\V1\Resource;
 
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
 use App\Domain\Entity\Holder;
@@ -40,11 +39,15 @@ final class HolderResource
     #[Assert\NotBlank(message: 'A birth date is required.')]
     public ?string $birthDate = null;
 
+    #[Assert\Email(message: 'Email is required.')]
+    public ?string $email = null;
+
     public static function fromEntity(Holder $holder): self
     {
         $resource = new self();
         $resource->holderName = $holder->name()->value;
         $resource->birthDate = $holder->birthDate()->value->format('Y-m-d');
+        $resource->email = $holder->email()->value;
 
         return $resource;
     }

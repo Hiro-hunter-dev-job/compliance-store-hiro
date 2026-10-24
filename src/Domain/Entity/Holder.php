@@ -6,6 +6,7 @@ namespace App\Domain\Entity;
 
 use App\Domain\Exception\InvalidHolderStatusTransitionException;
 use App\Domain\ValueObject\BirthDate;
+use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\HolderId;
 use App\Domain\ValueObject\HolderName;
 use App\Domain\ValueObject\HolderStatus;
@@ -31,6 +32,7 @@ final readonly class Holder
         private HolderName $name,
         private BirthDate $birthDate,
         private HolderStatus $status,
+        private Email $email,
         private \DateTimeImmutable $createdAt,
         private ?\DateTimeImmutable $consentCollectedAt,
         private ?\DateTimeImmutable $erasureRequestedAt,
@@ -41,6 +43,7 @@ final readonly class Holder
         HolderId $id,
         HolderName $name,
         BirthDate $birthDate,
+        Email $email,
         ?\DateTimeImmutable $consentCollectedAt = null,
     ): self {
         return new self(
@@ -48,6 +51,7 @@ final readonly class Holder
             name: $name,
             birthDate: $birthDate,
             status: HolderStatus::Active,
+            email: $email,
             createdAt: new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
             consentCollectedAt: $consentCollectedAt,
             erasureRequestedAt: null,
@@ -72,6 +76,7 @@ final readonly class Holder
             name: $this->name,
             birthDate: $this->birthDate,
             status: HolderStatus::ErasureRequested,
+            email: $this->email,
             createdAt: $this->createdAt,
             consentCollectedAt: $this->consentCollectedAt,
             erasureRequestedAt: new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
@@ -96,6 +101,7 @@ final readonly class Holder
             name: $anonymizedName,
             birthDate: $this->birthDate,
             status: HolderStatus::Anonymized,
+            email: $this->email,
             createdAt: $this->createdAt,
             consentCollectedAt: $this->consentCollectedAt,
             erasureRequestedAt: $this->erasureRequestedAt,
@@ -121,6 +127,10 @@ final readonly class Holder
     public function status(): HolderStatus
     {
         return $this->status;
+    }
+    public function email(): Email
+    {
+        return $this->email;
     }
 
     public function createdAt(): \DateTimeImmutable

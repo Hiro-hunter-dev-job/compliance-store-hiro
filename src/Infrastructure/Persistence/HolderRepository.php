@@ -20,12 +20,17 @@ final class HolderRepository extends ServiceEntityRepository implements HolderRe
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, StorageSpace::class);
+        parent::__construct($registry, Holder::class);;
     }
 
     public function findById(string $id): ?Holder
     {
         return $this->findOneBy(['id' => $id]);
+    }
+    public function findByEmail(string $email): ?Holder
+    {
+        dump($email);
+        return $this->findOneBy(['email' => $email]);
     }
 
     public function add(Holder $holder): void
