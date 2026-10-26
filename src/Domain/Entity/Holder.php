@@ -6,6 +6,7 @@ namespace App\Domain\Entity;
 
 use App\Domain\Exception\InvalidHolderStatusTransitionException;
 use App\Domain\ValueObject\BirthDate;
+use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\HolderId;
 use App\Domain\ValueObject\HolderName;
 use App\Domain\ValueObject\HolderStatus;
@@ -28,6 +29,7 @@ final readonly class Holder
 
     /**
      * @param ?BirthDate          $birthDate          null once the holder has been anonymized
+     * @param ?Email              $email              null once the holder has been anonymized
      * @param ?\DateTimeImmutable $consentCollectedAt when consent was collected; null when processing relies on another ground
      * @param ?\DateTimeImmutable $erasureRequestedAt when the data subject asked for erasure (GDPR art. 17); null otherwise
      * @param ?\DateTimeImmutable $anonymizedAt       when erasure was carried out; null otherwise
@@ -37,6 +39,7 @@ final readonly class Holder
         private HolderName $name,
         private ?BirthDate $birthDate,
         private HolderStatus $status,
+        private ?Email $email,
         private \DateTimeImmutable $createdAt,
         private ?\DateTimeImmutable $consentCollectedAt,
         private ?\DateTimeImmutable $erasureRequestedAt,
@@ -47,6 +50,7 @@ final readonly class Holder
         HolderId $id,
         HolderName $name,
         BirthDate $birthDate,
+        Email $email,
         ?\DateTimeImmutable $consentCollectedAt = null,
     ): self {
         return new self(
@@ -54,6 +58,7 @@ final readonly class Holder
             name: $name,
             birthDate: $birthDate,
             status: HolderStatus::Active,
+            email: $email,
             createdAt: new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
             consentCollectedAt: $consentCollectedAt,
             erasureRequestedAt: null,
@@ -78,6 +83,7 @@ final readonly class Holder
             name: $this->name,
             birthDate: $this->birthDate,
             status: HolderStatus::ErasureRequested,
+            email: $this->email,
             createdAt: $this->createdAt,
             consentCollectedAt: $this->consentCollectedAt,
             erasureRequestedAt: new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
@@ -87,7 +93,7 @@ final readonly class Holder
 
     /**
      * Carries out the erasure: the name is replaced by {@see ANONYMIZED_NAME}
-     * and the birth date dropped, so nothing identifying remains on the
+     * and the birth date and email dropped, so nothing identifying remains on the
      * record (the identifier and the timestamps are kept for accountability).
      * Only a holder with a pending erasure request can be anonymized; the
      * caller is responsible for destroying the holder's documents.
@@ -105,6 +111,7 @@ final readonly class Holder
             name: new HolderName(self::ANONYMIZED_NAME),
             birthDate: null,
             status: HolderStatus::Anonymized,
+            email: null,
             createdAt: $this->createdAt,
             consentCollectedAt: $this->consentCollectedAt,
             erasureRequestedAt: $this->erasureRequestedAt,
@@ -130,6 +137,11 @@ final readonly class Holder
     public function status(): HolderStatus
     {
         return $this->status;
+    }
+
+    public function email(): ?Email
+    {
+        return $this->email;
     }
 
     public function createdAt(): \DateTimeImmutable

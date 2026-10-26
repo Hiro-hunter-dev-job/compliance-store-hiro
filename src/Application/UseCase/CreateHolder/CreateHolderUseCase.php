@@ -11,6 +11,7 @@ use App\Domain\Port\Service\AuditTrailInterface;
 use App\Domain\Port\Service\GeneratorInterface;
 use App\Domain\ValueObject\AuditAction;
 use App\Domain\ValueObject\BirthDate;
+use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\HolderId;
 use App\Domain\ValueObject\HolderName;
 
@@ -23,23 +24,25 @@ final readonly class CreateHolderUseCase
     ) {}
 
     /**
-     * @throws HolderAlreadyExistsException
-     * @throws \InvalidArgumentException when the name or the birth date is invalid
+     * @throws HolderAlreadyExistsException when another holder already uses this email
+     * @throws \InvalidArgumentException    when the name, the birth date or the email is invalid
      */
     public function execute(CreateHolderCommand $command): Holder
     {
         $holderId = HolderId::fromString($this->idGenerator->generate());
         $holderName = new HolderName($command->holderName);
         $birthDate = BirthDate::fromString($command->birthDate);
+        $email = new Email($command->email);
 
-        if (null !== $this->holders->findById($holderId)) {
-            throw new HolderAlreadyExistsException($holderId);
+        if (null !== $this->holders->findByEmail($email->value)) {
+            throw HolderAlreadyExistsException::withEmail($email);
         }
 
         $holder = Holder::register(
             id: $holderId,
             name: $holderName,
             birthDate: $birthDate,
+            email: $email,
         );
 
         $this->holders->add($holder);

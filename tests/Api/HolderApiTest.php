@@ -18,6 +18,7 @@ final class HolderApiTest extends ApiTestCase
     private const ADA = [
         'holderName' => 'Ada Lovelace',
         'birthDate' => '1990-01-01',
+        'email' => 'ada.lovelace@example.com',
     ];
 
     protected function setUp(): void
@@ -42,6 +43,7 @@ final class HolderApiTest extends ApiTestCase
         self::assertNotEmpty($data['id']);
         self::assertSame('Ada Lovelace', $data['holderName']);
         self::assertSame('1990-01-01', $data['birthDate']);
+        self::assertSame('ada.lovelace@example.com', $data['email']);
         self::assertSame('active', $data['status']);
         self::assertNull($data['consentCollectedAt']);
         self::assertNull($data['erasureRequestedAt']);
@@ -93,6 +95,33 @@ final class HolderApiTest extends ApiTestCase
         self::assertResponseStatusCodeSame(422);
     }
 
+    public function testItRejectsAnEmailAlreadyUsedByAnotherHolder(): void
+    {
+        $client = self::createAuthenticatedClient();
+        $client->request('POST', '/api/v1/holders', [
+            'headers' => ['Content-Type' => 'application/json'],
+            'json' => self::ADA,
+        ]);
+        self::assertResponseStatusCodeSame(201);
+
+        $client->request('POST', '/api/v1/holders', [
+            'headers' => ['Content-Type' => 'application/json'],
+            'json' => ['holderName' => 'Another Ada'] + self::ADA,
+        ]);
+
+        self::assertResponseStatusCodeSame(409);
+    }
+
+    public function testItRejectsAnInvalidEmail(): void
+    {
+        self::createAuthenticatedClient()->request('POST', '/api/v1/holders', [
+            'headers' => ['Content-Type' => 'application/json'],
+            'json' => ['email' => 'not-an-email'] + self::ADA,
+        ]);
+
+        self::assertResponseStatusCodeSame(422);
+    }
+
     /**
      * @return iterable<string, array{string}>
      */
@@ -109,7 +138,7 @@ final class HolderApiTest extends ApiTestCase
     {
         self::createAuthenticatedClient()->request('POST', '/api/v1/holders', [
             'headers' => ['Content-Type' => 'application/json'],
-            'json' => ['holderName' => 'Ada Lovelace', 'birthDate' => $birthDate],
+            'json' => ['holderName' => 'Ada Lovelace', 'birthDate' => $birthDate, 'email' => 'ada.lovelace@example.com'],
         ]);
 
         self::assertResponseStatusCodeSame(422);

@@ -15,6 +15,7 @@ use App\Domain\Port\Repository\HolderRepositoryInterface;
 use App\Domain\Port\Service\AuditTrailInterface;
 use App\Domain\Port\Service\IdValidatorInterface;
 use App\Domain\ValueObject\BirthDate;
+use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\DocumentId;
 use App\Domain\ValueObject\FileHash;
 use App\Domain\ValueObject\HolderId;
@@ -139,6 +140,7 @@ final class AnonymizeHolderUseCaseTest extends TestCase
             id: HolderId::fromString(self::HOLDER_ID),
             name: new HolderName('Ada Lovelace'),
             birthDate: new BirthDate(new \DateTimeImmutable('1990-01-01', new \DateTimeZone('UTC'))),
+            email: new Email('ada.lovelace@example.com'),
         );
     }
 

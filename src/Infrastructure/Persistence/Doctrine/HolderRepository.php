@@ -26,6 +26,11 @@ final class HolderRepository extends ServiceEntityRepository implements HolderRe
         return $this->find($id->value);
     }
 
+    public function findByEmail(string $email): ?Holder
+    {
+        return $this->findOneBy(['email' => $email]);
+    }
+
     public function add(Holder $holder): void
     {
         $entityManager = $this->getEntityManager();
@@ -45,12 +50,13 @@ final class HolderRepository extends ServiceEntityRepository implements HolderRe
         $affected = $entityManager
             ->createQuery(
                 'UPDATE '.Holder::class.' h '
-                .'SET h.name = :name, h.birthDate = :birthDate, h.status = :status, '
+                .'SET h.name = :name, h.birthDate = :birthDate, h.email = :email, h.status = :status, '
                 .'h.erasureRequestedAt = :erasureRequestedAt, h.anonymizedAt = :anonymizedAt '
                 .'WHERE h.id = :id',
             )
             ->setParameter('name', $holder->name(), 'holder_name')
             ->setParameter('birthDate', $holder->birthDate(), 'birth_date')
+            ->setParameter('email', $holder->email(), 'email')
             ->setParameter('status', $holder->status()->value)
             ->setParameter('erasureRequestedAt', $holder->erasureRequestedAt(), 'datetime_immutable')
             ->setParameter('anonymizedAt', $holder->anonymizedAt(), 'datetime_immutable')

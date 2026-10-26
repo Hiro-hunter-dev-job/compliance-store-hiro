@@ -18,6 +18,7 @@ use App\Domain\Port\Service\AuditTrailInterface;
 use App\Domain\Port\Service\IdValidatorInterface;
 use App\Domain\ValueObject\AuditAction;
 use App\Domain\ValueObject\BirthDate;
+use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\DocumentId;
 use App\Domain\ValueObject\EncryptedPayload;
 use App\Domain\ValueObject\EncryptionEnvelope;
@@ -115,6 +116,7 @@ final class StoreDocumentUseCaseTest extends TestCase
             id: HolderId::fromString(self::HOLDER_ID),
             name: new HolderName('Ada Lovelace'),
             birthDate: new BirthDate(new \DateTimeImmutable('1990-01-01', new \DateTimeZone('UTC'))),
+            email: new Email('ada.lovelace@example.com'),
         );
     }
 

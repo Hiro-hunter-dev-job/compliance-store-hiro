@@ -61,7 +61,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             openapi: new Operation(
                 tags: ['V1 - Holders'],
                 summary: 'Carry out a pending erasure request',
-                description: 'Destroys every document of the holder (ciphertext and wrapped key) and anonymizes the record: name replaced, birth date dropped. 409 when no erasure request is pending.',
+                description: 'Destroys every document of the holder (ciphertext and wrapped key) and anonymizes the record: name replaced, birth date and email dropped. 409 when no erasure request is pending.',
                 requestBody: null,
             ),
             deserialize: false,
@@ -90,6 +90,13 @@ final class HolderResource
     #[Assert\Date(message: 'The birth date must use the Y-m-d format.')]
     public ?string $birthDate = null;
 
+    /**
+     * Required on registration; null in the output once the holder is anonymized.
+     */
+    #[Assert\NotBlank(message: 'An email is required.')]
+    #[Assert\Email(message: 'The email must be a valid address.')]
+    public ?string $email = null;
+
     public ?string $status = null;
 
     public ?string $createdAt = null;
@@ -106,6 +113,7 @@ final class HolderResource
         $resource->id = $holder->id()->value;
         $resource->holderName = $holder->name()->value;
         $resource->birthDate = null === $holder->birthDate() ? null : (string) $holder->birthDate();
+        $resource->email = $holder->email()?->value;
         $resource->status = $holder->status()->value;
         $resource->createdAt = $holder->createdAt()->format(\DateTimeInterface::ATOM);
         $resource->consentCollectedAt = $holder->consentCollectedAt()?->format(\DateTimeInterface::ATOM);

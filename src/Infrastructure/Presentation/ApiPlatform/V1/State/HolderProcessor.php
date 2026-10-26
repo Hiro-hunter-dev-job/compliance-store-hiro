@@ -35,10 +35,11 @@ final readonly class HolderProcessor implements ProcessorInterface
         $input = new HolderResource();
         $input->holderName = \is_string($payload['holderName'] ?? null) ? $payload['holderName'] : null;
         $input->birthDate = \is_string($payload['birthDate'] ?? null) ? $payload['birthDate'] : null;
+        $input->email = \is_string($payload['email'] ?? null) ? $payload['email'] : null;
 
         $this->validator->validate($input);
 
-        if (null === $input->holderName || null === $input->birthDate) {
+        if (null === $input->holderName || null === $input->birthDate || null === $input->email) {
             throw new UnprocessableEntityHttpException('Missing required holder parameters.');
         }
 
@@ -46,6 +47,7 @@ final readonly class HolderProcessor implements ProcessorInterface
             $holder = $this->useCase->execute(new CreateHolderCommand(
                 holderName: $input->holderName,
                 birthDate: $input->birthDate,
+                email: $input->email,
             ));
         } catch (HolderAlreadyExistsException $e) {
             throw new ConflictHttpException($e->getMessage(), $e);

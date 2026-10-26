@@ -9,5 +9,6 @@ final readonly class CreateHolderCommand
     public function __construct(
         public string $holderName,
         public string $birthDate,
+        public string $email,
     ) {}
 }

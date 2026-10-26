@@ -7,7 +7,8 @@ Authorization: Bearer {{apiKey}}
 
 {
   "holderName": "Ada Lovelace",
-  "birthDate": "1990-01-01"
+  "birthDate": "1990-01-01",
+  "email": "ada.lovelace@example.com"
 }
 
 > {%

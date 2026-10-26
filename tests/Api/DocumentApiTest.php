@@ -8,6 +8,7 @@ use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
 use App\Domain\Entity\Document;
 use App\Domain\Entity\Holder;
 use App\Domain\ValueObject\BirthDate;
+use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\HolderId;
 use App\Domain\ValueObject\HolderName;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,6 +41,7 @@ final class DocumentApiTest extends ApiTestCase
             id: HolderId::fromString(self::HOLDER_ID),
             name: new HolderName('Ada Lovelace'),
             birthDate: new BirthDate(new \DateTimeImmutable('1990-01-01', new \DateTimeZone('UTC'))),
+            email: new Email('ada.lovelace@example.com'),
         ));
         $entityManager->flush();
         $entityManager->clear();

@@ -12,6 +12,8 @@ interface HolderRepositoryInterface
 {
     public function findById(HolderId $id): ?Holder;
 
+    public function findByEmail(string $email): ?Holder;
+
     public function add(Holder $holder): void;
 
     /**

@@ -46,7 +46,7 @@ final class AuditEventApiTest extends ApiTestCase
 
         $client->request('POST', '/api/v1/holders', [
             'headers' => ['Content-Type' => 'application/json'],
-            'json' => ['holderName' => 'Ada Lovelace', 'birthDate' => '1990-01-01'],
+            'json' => ['holderName' => 'Ada Lovelace', 'birthDate' => '1990-01-01', 'email' => bin2hex(random_bytes(6)).'@example.com'],
         ]);
         $holderId = $client->getResponse()->toArray()['id'];
 
